@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.6.0 <0.8.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.0/contracts/token/ERC20/presets/ERC20PresetFixedSupply.sol";
+import "@OpenZeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
 
-contract UpstateToken is ERC20PresetFixedSupply {
+contract UpstateToken is ERC20PresetMinterPauser {
     
     uint public startTime;
     uint public endTime;
-    uint public nowTime = block.number; // delte later
+    uint public nowTime = block.number; // delete later
     
     modifier withinTransferWindow() {
         require(startTime < block.number, "The transfer window has not opened.");
@@ -18,15 +18,17 @@ contract UpstateToken is ERC20PresetFixedSupply {
     constructor(
         uint _startTime,
         uint _endTime
-    ) ERC20PresetFixedSupply(
+    ) ERC20PresetMinterPauser(
         "UpstateToken",
-        "UPTKN",
-        10000000000000000000000,
-        msg.sender
+        "UPTKN"
     )
     {
         startTime = _startTime;
         endTime = _endTime;
+    }
+
+    function mint(address _to, uint _amount) override public {
+        ERC20PresetMinterPauser.mint(_to, _amount);
     }
 
     function transferUpstateToken(
