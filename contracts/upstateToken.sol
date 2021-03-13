@@ -15,6 +15,9 @@ contract UpstateToken is ERC20PresetMinterPauser {
         _;
     }
 
+
+    // Pass parameters to create mintable
+    // ERC20 tokens, UPTKN
     constructor(
         uint _startTime,
         uint _endTime
@@ -27,10 +30,15 @@ contract UpstateToken is ERC20PresetMinterPauser {
         endTime = _endTime;
     }
 
+    // Mint provided amount of tokens to
+    // provided address
     function mint(address _to, uint _amount) override public {
         ERC20PresetMinterPauser.mint(_to, _amount);
     }
 
+    // Transfer UPTKN to provided address,
+    // but only within provided start and
+    // end times.
     function transferUpstateToken(
         address _recipient,
         uint _amount
@@ -38,5 +46,22 @@ contract UpstateToken is ERC20PresetMinterPauser {
         public withinTransferWindow()
     {
         ERC20.transfer(_recipient, _amount);
+    }
+}
+
+contract Contribution is UpstateToken {
+
+    mapping(address => uint) adressEthContributionAmount;
+
+    // Contribute ETH,
+    // and received equal UPTKN
+    function contribute() payable public {
+        require(msg.value != 0, "You need to contribute ETH to receive UPTKN");
+        addressEthContribution[msg.sender][msg.value];
+        UpstateToken.mint(msg.sender, msg.value);
+    }
+
+    function addressEthContribution(address _contributor) public view returns (uint) {
+        return adressEthContributionAmount[_contributor];
     }
 }
