@@ -1,5 +1,7 @@
 const { assert, should } = require("chai");
 const upstateTokenContract = require("../build/contracts/UpstateToken.json");
+const contributionContract = require("../build/contracts/Contribution.json");
+
 
 
 contract("UpstateToken Test", async (accounts) => {
@@ -129,5 +131,33 @@ contract("UpstateToken Test", async (accounts) => {
 
     })
     */
+
+   it("confirms you can contribute via the Contribution contract", async () => {
+    // Set index zero of accounts array as deployer address
+    const deployerAccount = await accounts[0];
+
+    // Set index one of accounts arrray as recipient address
+    const recipientAccount = await accounts[1];
+
+    // Get networkId
+    const networkId = await web3.eth.net.getId();
+
+    // Create contract instance
+    const contributionInstance = await new web3.eth.Contract(
+        contributionContract.abi,
+        contributionContract.networks[networkId] && contributionContract.networks[networkId].address
+    );
+
+    // Mint new tokens to deployer account
+    // while simultaneously confirming function transaction worked
+    assert.isOk(await contributionInstance.methods.contribute().send({ from: deployerAccount, value: 1000000000000000000 }), "Unable to contribute ETH.");
+
+    try {
+        await upstateTokenInstance.methods.transferUpstateToken(recipientAccount, 10).send({ from: deployerAccount });
+    } catch (err) {
+        console.log("The transfer window has closed.");
+    };
+
+})
 
 });

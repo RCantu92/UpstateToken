@@ -7,7 +7,6 @@ contract UpstateToken is ERC20PresetMinterPauser {
     
     uint public startTime;
     uint public endTime;
-    uint public nowTime = block.number; // delete later
     
     modifier withinTransferWindow() {
         require(startTime < block.number, "The transfer window has not opened.");
@@ -46,22 +45,5 @@ contract UpstateToken is ERC20PresetMinterPauser {
         public withinTransferWindow()
     {
         ERC20.transfer(_recipient, _amount);
-    }
-}
-
-contract Contribution is UpstateToken {
-
-    mapping(address => uint) adressEthContributionAmount;
-
-    // Contribute ETH,
-    // and received equal UPTKN
-    function contribute() payable public {
-        require(msg.value != 0, "You need to contribute ETH to receive UPTKN");
-        addressEthContribution[msg.sender][msg.value];
-        UpstateToken.mint(msg.sender, msg.value);
-    }
-
-    function addressEthContribution(address _contributor) public view returns (uint) {
-        return adressEthContributionAmount[_contributor];
     }
 }
