@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0 <0.8.0;
 
-import "@OpenZeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
+import "@OpenZeppelin/contracts/token/ERC20/ERC20.sol";
+// import "@OpenZeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
 
-contract UpstateToken is ERC20PresetMinterPauser {
+contract UpstateToken is ERC20 {
     
     uint public startTime;
     uint public endTime;
@@ -14,9 +15,9 @@ contract UpstateToken is ERC20PresetMinterPauser {
         _;
     }
 
-
     // Pass parameters to create mintable
     // ERC20 tokens, UPTKN
+    /*
     constructor(
         uint _startTime,
         uint _endTime
@@ -28,22 +29,28 @@ contract UpstateToken is ERC20PresetMinterPauser {
         startTime = _startTime;
         endTime = _endTime;
     }
+    */
 
+    // Pass parameters to create mintable
+    // ERC20 tokens, UPTKN
+    constructor(uint _startTime, uint _endTime, uint _initialSupply) ERC20("UpstateToken", "UPTKN") {
+        startTime = _startTime;
+        endTime = _endTime;
+        ERC20._mint(msg.sender, _initialSupply);
+    }
+
+    /*
     // Mint provided amount of tokens to
     // provided address
     function mint(address _to, uint _amount) override public {
         ERC20PresetMinterPauser.mint(_to, _amount);
     }
+    */
 
     // Transfer UPTKN to provided address,
     // but only within provided start and
     // end times.
-    function transferUpstateToken(
-        address _recipient,
-        uint _amount
-    )
-        public withinTransferWindow()
-    {
+    function transferUpstateToken(address _recipient, uint _amount) public withinTransferWindow() {
         ERC20.transfer(_recipient, _amount);
     }
 }
