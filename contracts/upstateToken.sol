@@ -51,7 +51,7 @@ contract UpstateToken is ERC20 {
     // but only within provided start and
     // end times.
     function transferUpstateToken(address _recipient, uint _amount) public withinTransferWindow() {
-        ERC20.approve(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _amount);
-        ERC20.transfer(_recipient, _amount);
+        ERC20._approve(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, msg.sender, _amount);
+        ERC20.transferFrom(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _recipient, _amount);
     }
 }

@@ -31,7 +31,6 @@ contract("Contribution Test", async (accounts) => {
         assert(deployerEthContribution > 0, "Deployer address balance of ETH is zero.");
 
     })
-    */
     
     it("confirms Contribution contract can hold UPTKN", async () => {
         // Set index zero of accounts array as default address
@@ -56,8 +55,8 @@ contract("Contribution Test", async (accounts) => {
         assert(contractUptknAmount == uptknTotalSupply, "Contract's UPTKN balance is not equal to UPTKN total supply.");
 
     })
+    */
 
-    /*
     it("confirms you can receive UPTKN for your ETH contribution", async () => {
         // Set index zero of accounts array as deployer address
         // USE A CONTRACT ADDRESS TO BE ABLE TO MINT?
@@ -73,25 +72,20 @@ contract("Contribution Test", async (accounts) => {
         );
 
         // DELETE LATER
-        // console.log(await contributionInstance.methods.totalSupply().call({ from: contributorAccount }));
+        console.log(await contributionInstance.methods.totalSupply().call({ from: contributorAccount }));
 
         // Mint new tokens to deployer account
         // while simultaneously confirming function transaction worked
-        // assert.isOk(await contributionInstance.methods.contribute().send({ from: contributorAccount, value: 1000000000000000000 }), "Unable to contribute ETH.");
-
-        // Balance of contract addess
-        const contractUptknAmount = await contributionInstance.methods.balanceOf("0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d").call({ from: contributorAccount });
-        console.log(contractUptknAmount);
+        assert.isOk(await contributionInstance.methods.contribute().send({ from: contributorAccount, value: 1000000000000000000, gas: 2100000 }), "Unable to contribute ETH.");
 
         // Balance of deployer addess
-        // const contributorUptknAmount = await contributionInstance.methods.balanceOf(contributorAccount).call({ from: contributorAccount });
-        // console.log(contributorUptknAmount);
+        const contributorUptknAmount = await contributionInstance.methods.balanceOf(contributorAccount).call({ from: contributorAccount });
+        console.log(contributorUptknAmount);
 
         // Verify recipient's address balance is more than zero
         // (convert string to integer)
-        // assert(contributorUptknAmount > 0, "Contributor address balance of UPTKN is zero.");
+        assert(contributorUptknAmount > 0, "Contributor address balance of UPTKN is zero.");
 
     })
-    */
 
 })
