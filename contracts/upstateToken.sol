@@ -2,8 +2,15 @@
 pragma solidity >=0.6.0 <0.8.0;
 
 import "@OpenZeppelin/contracts/token/ERC20/ERC20.sol";
-// import "@OpenZeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
 
+/**
+ * @title Upstate Token, ERC20 token with transfer
+ * functionality based on provided time window, based on blocks.
+ * @author Roberto Cantu
+ * @notice Creates new token, UPTKN, that can only be transfered
+ * within provided block-based time window.
+ * @dev Uses ERC20 functionality from OpenZeppelin.
+ */
 contract UpstateToken is ERC20 {
     
     uint public startTime;
@@ -15,43 +22,33 @@ contract UpstateToken is ERC20 {
         _;
     }
 
-    // Pass parameters to create mintable
-    // ERC20 tokens, UPTKN
-    /*
-    constructor(
-        uint _startTime,
-        uint _endTime
-    ) ERC20PresetMinterPauser(
-        "UpstateToken",
-        "UPTKN"
-    )
-    {
-        startTime = _startTime;
-        endTime = _endTime;
-    }
-    */
-
-    // Pass parameters to create mintable
-    // ERC20 tokens, UPTKN
+    /**
+     * @notice Creates new ERC20 UpstateToken (UPTKN) as well as
+     * sets time window, which would restrict token's transferability.
+     * @dev Hard-codes name and symbol of ERC20 to ERC20.contructor,
+     * and sets start and end time variables. Also mints initial supply
+     * to Contribution contract.
+     * @param _startTime opening time of transfer window, based on blocks.
+     * @param _endTime closing time of transfer window, based on blocks.
+     * @param _initialSupply initial supply of UPTKN.
+     */
     constructor(uint _startTime, uint _endTime, uint _initialSupply) ERC20("UpstateToken", "UPTKN") {
         startTime = _startTime;
         endTime = _endTime;
-        ERC20._mint(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _initialSupply);
+        ERC20._mint(0xcd7A2c5d23CaB2e41a7d778041CfF5C92316ea32, _initialSupply);
     }
 
-    /*
-    // Mint provided amount of tokens to
-    // provided address
-    function mint(address _to, uint _amount) override public {
-        ERC20PresetMinterPauser.mint(_to, _amount);
-    }
-    */
-
-    // Transfer UPTKN to provided address,
-    // but only within provided start and
-    // end times.
-    function transferUpstateToken(address _recipient, uint _amount) public withinTransferWindow() {
-        ERC20._approve(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, msg.sender, _amount);
-        ERC20.transferFrom(0x1B6051C608bB7f35E6a0eb2B1B9009d3Ef3aF14d, _recipient, _amount);
+    /**
+     * @notice Transfers UPTKN to provided address, as long as it is
+     * within the transfer window.
+     * @dev Uses ERC20's _approve() and transferFrom() functions to
+     * transfer UPTKN from the Contribution contract to the ETH contributor.
+     * The Contribution contract's address was hardcoded to allow UPTKN transfer.
+     * @param _recipient ETH contributor address that will receive UPTKN in return.
+     * @param _amount amount of UPTKN contributor will receive.
+     */
+    function transferUpstateToken(address _recipient, uint _amount) internal withinTransferWindow() {
+        ERC20._approve(0xcd7A2c5d23CaB2e41a7d778041CfF5C92316ea32, msg.sender, _amount);
+        ERC20.transferFrom(0xcd7A2c5d23CaB2e41a7d778041CfF5C92316ea32, _recipient, _amount);
     }
 }
