@@ -1,5 +1,7 @@
-const { assert, expect } = require("chai");
+const { assert } = require("chai");
 const BigNumber = require("bignumber.js");
+const { expectRevert } = require("@openzeppelin/test-helpers");
+
 const upstateTokenContract = require("../build/contracts/UpstateToken.json");
 
 contract("UpstateToken Test", async (accounts) => {
@@ -21,17 +23,17 @@ contract("UpstateToken Test", async (accounts) => {
         // Deploy new UpstateToken contract instance with initial supply
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
-        .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
-        .send({ from: deployerAccount, gas: 2100000 });
+            .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
+            .send({ from: deployerAccount, gas: 2100000 });
 
         // Contribute 1 ETH to UpstateToken contract
         const uptknDeployerAmount = new BigNumber(1000000000000000000);
         assert.isOk(await deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
-        .send({from : deployerAccount }));
+            .send({from : deployerAccount }));
 
         // Balance of deployer addess
         const deployerBalance = await deployedUpstateContract.methods.balanceOf(deployerAccount)
-        .call({ from: deployerAccount });
+            .call({ from: deployerAccount });
 
         // Deployer's UPTKN balance is the same as 
         assert(deployerBalance == uptknDeployerAmount, "Deployer address did not receive correct amount of UPTKN.");
@@ -54,24 +56,24 @@ contract("UpstateToken Test", async (accounts) => {
         // Deploy new UpstateToken contract instance with initial supply
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
-        .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
-        .send({ from: deployerAccount, gas: 2100000 });
+            .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
+            .send({ from: deployerAccount, gas: 2100000 });
 
         // Contribute 5 ETH to UpstateToken contract
         const uptknDeployerAmount = new BigNumber(5000000000000000000);
         assert.isOk(await deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
-        .send({from : deployerAccount }));
+            .send({from : deployerAccount }));
 
         // Transfer 2 ETH to recipient account
         const uptknRecipientAmount = new BigNumber(2000000000000000000);
         assert.isOk(await deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
-        .send({from : deployerAccount }));
+            .send({from : deployerAccount }));
 
         // Balances of both addesses
         const deployerBalance = await deployedUpstateContract.methods.balanceOf(deployerAccount)
-        .call({ from: deployerAccount });
+            .call({ from: deployerAccount });
         const recipientBalance = await deployedUpstateContract.methods.balanceOf(recipientAccount)
-        .call({ from: recipientAccount });
+            .call({ from: recipientAccount });
 
         // Verify deployer and recipient addresses' balance are more than zero
         // (convert string to integer)
@@ -97,30 +99,26 @@ contract("UpstateToken Test", async (accounts) => {
         // Deploy new UpstateToken contract instance with initial supply
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
-        .deploy({ data: upstateTokenContract.bytecode, arguments: [2000, 3000, initialSupply] })
-        .send({ from: deployerAccount, gas: 2100000 });
+            .deploy({ data: upstateTokenContract.bytecode, arguments: [2000, 3000, initialSupply] })
+            .send({ from: deployerAccount, gas: 2100000 });
 
         // Contribute 5 ETH to UpstateToken contract
+        // (Transaction should fail, as it is before _startTime)
         const uptknDeployerAmount = new BigNumber(5000000000000000000);
-        assert.isOk(await deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
-        .send({from : deployerAccount }));
+        await expectRevert(
+            deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
+                .send({from : deployerAccount }),
+            "The transfer window has not opened."
+        );
 
-        /*
+        // Transfer 2 UPTKN from deployer account to recipient account
+        // (Transaction should fail, as it is before _startTime)
         const uptknRecipientAmount = new BigNumber(2000000000000000000);
-        expect(await deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
-        .send({from : deployerAccount })).to.throw(new Error("Returned error: VM Exception while processing transaction: revert The transfer window has not opened."));
-        */
-
-        /*
-        try {
-            // Transfer 2 ETH to recipient account
-            const uptknRecipientAmount = new BigNumber(2000000000000000000);
-            await deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
-            .send({from : deployerAccount });
-        } catch(err) {
-            console.log("The transfer window has not opened.");
-        }
-        */
+        await expectRevert(
+            deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
+                .send({from : deployerAccount }),
+            "The transfer window has not opened."
+        );
 
     })
 
