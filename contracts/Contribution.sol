@@ -46,7 +46,18 @@ contract Contribution is UpstateToken {
     function contribute() payable public {
         require(msg.value != 0, "You need to contribute ETH to receive UPTKN");
         addressEthContribution[msg.sender] = addressEthContribution[msg.sender].add(msg.value);
-        UpstateToken.transferUpstateToken(msg.sender, msg.value);
+        UpstateToken.ethToUptknContribution(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Accepts ETH contributions and returns contributor
+     * UPTKN in equal amount of contribution.
+     * @dev Verifies msg.value is not zero, adds ETH contribution to
+     * amount of ETH the address has contributed, returns UPTKN in same
+     * amount as ETH contributed.
+     */
+    function transferUptkn(address _recipient, uint _amount) payable public {
+        UpstateToken.transferUpstateToken(_recipient, _amount);
     }
 
     /**

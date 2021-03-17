@@ -47,7 +47,20 @@ contract UpstateToken is ERC20 {
      * @param _recipient ETH contributor address that will receive UPTKN in return.
      * @param _amount amount of UPTKN contributor will receive.
      */
-    function transferUpstateToken(address _recipient, uint _amount) internal withinTransferWindow() {
+    function transferUpstateToken(address _recipient, uint _amount) public withinTransferWindow() {
+        ERC20._transfer(msg.sender, _recipient, _amount);
+    }
+
+    /**
+     * @notice Transfers UPTKN to provided address out of Contribution contract,
+     * as long as it is within the transfer window.
+     * @dev Uses ERC20's _approve() and transferFrom() functions to
+     * transfer UPTKN from the Contribution contract to the ETH contributor.
+     * The Contribution contract's address was hardcoded to allow UPTKN transfer.
+     * @param _recipient ETH contributor address that will receive UPTKN in return.
+     * @param _amount amount of UPTKN contributor will receive.
+     */
+    function ethToUptknContribution(address _recipient, uint _amount) public withinTransferWindow() {
         ERC20._approve(0xcd7A2c5d23CaB2e41a7d778041CfF5C92316ea32, msg.sender, _amount);
         ERC20.transferFrom(0xcd7A2c5d23CaB2e41a7d778041CfF5C92316ea32, _recipient, _amount);
     }
