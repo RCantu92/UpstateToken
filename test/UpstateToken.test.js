@@ -6,7 +6,6 @@ const upstateTokenContract = require("../build/contracts/UpstateToken.json");
 
 contract("UpstateToken Test", async (accounts) => {
 
-    /*
     it("confirms it can to deploy contract and transfer UPTKN", async () => {
         // Set index zero of accounts array as the first address
         const deployerAccount = await accounts[0];
@@ -80,7 +79,7 @@ contract("UpstateToken Test", async (accounts) => {
         assert(parseInt(deployerBalance) == (uptknDeployerAmount - uptknRecipientAmount), "Deployer address did not receive correct amount of UPTKN.");
         assert(parseInt(recipientBalance) == uptknRecipientAmount, "Recipient address did not receive correct amount of UPTKN.");
     });
-    */
+    
     
     it("confirms UPTKN cannot be sent before _startTime", async () => {
         // Set index of first two accounts
@@ -122,12 +121,9 @@ contract("UpstateToken Test", async (accounts) => {
 
     })
 
-    /*
     it("confirms UPTKN cannot be sent after _endTime", async () => {
-        // Set index zero of accounts array as deployer address
+        // Set index of first two accounts
         const deployerAccount = await accounts[0];
-
-        // Set index one of accounts arrray as recipient address
         const recipientAccount = await accounts[1];
 
         // Get networkId
@@ -139,17 +135,30 @@ contract("UpstateToken Test", async (accounts) => {
             upstateTokenContract.networks[networkId] && upstateTokenContract.networks[networkId].address
         );
 
-        // Mint new tokens to deployer account
-        // while simultaneously confirming function transaction worked
-        assert.isOk(await upstateTokenInstance.methods.mint(deployerAccount, 100).send({ from: deployerAccount }), "Contract did not mint UPTKN");
+        // Deploy new UpstateToken contract instance with initial supply
+        const initialSupply = new BigNumber(115077231000000000000000000);
+        const deployedUpstateContract = await upstateTokenInstance
+            .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 50, initialSupply] })
+            .send({ from: deployerAccount, gas: 2100000 });
 
-        try {
-            await upstateTokenInstance.methods.transferUpstateToken(recipientAccount, 10).send({ from: deployerAccount });
-        } catch (err) {
-            console.log("The transfer window has closed.");
-        };
+        // Contribute 5 ETH to UpstateToken contract
+        // (Transaction should fail, as it is before _endTime)
+        const uptknDeployerAmount = new BigNumber(5000000000000000000);
+        await expectRevert(
+            deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
+                .send({from : deployerAccount }),
+            "The transfer window has closed."
+        );
+
+        // Transfer 2 UPTKN from deployer account to recipient account
+        // (Transaction should fail, as it is after _endTime)
+        const uptknRecipientAmount = new BigNumber(2000000000000000000);
+        await expectRevert(
+            deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
+                .send({from : deployerAccount }),
+            "The transfer window has closed."
+        );
 
     })
-    */
 
 })
