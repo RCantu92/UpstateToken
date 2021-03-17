@@ -20,6 +20,8 @@ contract("UpstateToken Test", async (accounts) => {
         );
 
         // Deploy new UpstateToken contract instance with initial supply
+        // (initial supply is based on current circulating ETH, so 1 UPTKN = 1 ETH)
+        // _startTime = block number 10, _endTime = block number 2000
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
             .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
@@ -30,11 +32,11 @@ contract("UpstateToken Test", async (accounts) => {
         assert.isOk(await deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
             .send({from : deployerAccount }));
 
-        // Balance of deployer addess
+        // UPTKN balance of deployer address
         const deployerBalance = await deployedUpstateContract.methods.balanceOf(deployerAccount)
             .call({ from: deployerAccount });
 
-        // Deployer's UPTKN balance is the same as 
+        // Confirm deployer's UPTKN balance is as expected
         assert(deployerBalance == uptknDeployerAmount, "Deployer address did not receive correct amount of UPTKN.");
     });
     
@@ -53,6 +55,8 @@ contract("UpstateToken Test", async (accounts) => {
         );
 
         // Deploy new UpstateToken contract instance with initial supply
+        // (initial supply is based on current circulating ETH, so 1 UPTKN = 1 ETH)
+        // _startTime = block number 10, _endTime = block number 2000
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
             .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 2000, initialSupply] })
@@ -96,6 +100,8 @@ contract("UpstateToken Test", async (accounts) => {
         );
 
         // Deploy new UpstateToken contract instance with initial supply
+        // (initial supply is based on current circulating ETH, so 1 UPTKN = 1 ETH)
+        // _startTime = block number 2000, _endTime = block number 3000
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
             .deploy({ data: upstateTokenContract.bytecode, arguments: [2000, 3000, initialSupply] })
@@ -136,6 +142,8 @@ contract("UpstateToken Test", async (accounts) => {
         );
 
         // Deploy new UpstateToken contract instance with initial supply
+        // (initial supply is based on current circulating ETH, so 1 UPTKN = 1 ETH)
+        // _startTime = block number 10, _endTime = block number 50
         const initialSupply = new BigNumber(115077231000000000000000000);
         const deployedUpstateContract = await upstateTokenInstance
             .deploy({ data: upstateTokenContract.bytecode, arguments: [10, 50, initialSupply] })
