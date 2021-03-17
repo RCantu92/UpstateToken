@@ -1,9 +1,10 @@
-const { assert } = require("chai");
+const { assert, expect } = require("chai");
 const BigNumber = require("bignumber.js");
 const upstateTokenContract = require("../build/contracts/UpstateToken.json");
 
 contract("UpstateToken Test", async (accounts) => {
 
+    /*
     it("confirms it can to deploy contract and transfer UPTKN", async () => {
         // Set index zero of accounts array as the first address
         const deployerAccount = await accounts[0];
@@ -77,6 +78,7 @@ contract("UpstateToken Test", async (accounts) => {
         assert(parseInt(deployerBalance) == (uptknDeployerAmount - uptknRecipientAmount), "Deployer address did not receive correct amount of UPTKN.");
         assert(parseInt(recipientBalance) == uptknRecipientAmount, "Recipient address did not receive correct amount of UPTKN.");
     });
+    */
     
     it("confirms UPTKN cannot be sent before _startTime", async () => {
         // Set index of first two accounts
@@ -103,14 +105,22 @@ contract("UpstateToken Test", async (accounts) => {
         assert.isOk(await deployedUpstateContract.methods.ethToUptknContribution(deployerAccount, uptknDeployerAmount)
         .send({from : deployerAccount }));
 
+        /*
+        const uptknRecipientAmount = new BigNumber(2000000000000000000);
+        expect(await deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
+        .send({from : deployerAccount })).to.throw(new Error("Returned error: VM Exception while processing transaction: revert The transfer window has not opened."));
+        */
+
+        /*
         try {
             // Transfer 2 ETH to recipient account
             const uptknRecipientAmount = new BigNumber(2000000000000000000);
             await deployedUpstateContract.methods.transferUpstateToken(recipientAccount, uptknRecipientAmount)
             .send({from : deployerAccount });
-        } catch {
+        } catch(err) {
             console.log("The transfer window has not opened.");
-        };
+        }
+        */
 
     })
 

@@ -1,6 +1,7 @@
 const { assert } = require("chai");
 const contributionContract = require("../build/contracts/Contribution.json");
 
+// This test has its parameters based on 2_deploy_contracts.js
 contract("Contribution Test", async (accounts) => {
     
     it("confirms you can contribute ETH to the Contribution contract", async () => {
